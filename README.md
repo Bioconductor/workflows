@@ -15,20 +15,14 @@ To run the Linux version of the "official" Bioconductor `R CMD check` and `BiocC
 
 To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivity from the default "warning") use the web-based [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/) and see the [BiocCheck Usage Guide](bioccheck_usage.md).
 
-## Overview: Two Complementary Testing Patterns
+## `r-universe-org/workflows` for Multi-platform Testing
 
-Two complementary workflows are available depending on your testing goals:
-
-| Purpose | Workflow Reference | Target Environment | Managed By |
-| :--- | :--- | :--- | :--- |
-| **1. Rapid Feedback Check** | `bioconductor/workflows/.github/workflows/bioccheck.yml@main` | Linux (`bioconductor_docker` container) | Bioconductor Core Team / Maintainers |
-| **2. Comprehensive Pre-Release Check** | `r-universe-org/workflows/.github/workflows/build.yml@v3` | Multi-OS (Linux, macOS, Windows, WebAssembly) + `BiocCheck` | R-Universe Team |
+For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-org/workflows/.github/workflows/build.yml](https://github.com/r-universe-org/workflows#testing-the-build-workflow-in-your-own-github-repository) workflow. To specify that `BiocCheck` should be run during the build, include `organization: bioconductor` in the workflow `with:` parameters, indented the same as the last line in the r-universe README.md workflow example. For packages already in Bioconductor, search the [r-universe package landing pages](https://r-universe.dev/search) for current build status.
 
 ## Documentation
 
 The documentation for these workflows has been separated into distinct files for clarity:
 
 - [**BiocCheck Usage**](bioccheck_usage.md): Comprehensive instructions for using the `bioccheck.yml` reusable workflow, including test coverage and `pkgdown` setup.
-- [**R-Universe Usage**](r-universe-org_usage.md): Instructions for using the comprehensive multi-platform R-Universe workflow.
 - [**Workflow Comparison**](workflow_comparison.md): A detailed comparison of the two workflows to help you choose the right one for your needs.
 - [**Technical Notes**](technical_notes.md): Software architecture, ADRs, internal test flows (`canary.yml`, `actionlint.yml`), and guidelines for contributors.
