@@ -46,17 +46,17 @@ When `enable_cyclocomp` is true, the workflow uploads a `cyclocomp-results` CSV 
 
 ### Adding Status Badges to `README.md`
 
-Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name.
+Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name. Note, the "Bioconductor Release" and "Bioconductor Devel" badges are not related to this workflow. Only use the codecov and pkgdown badges if you have enabled those features.
 
 **GitHub Actions:**
 
 ```
 [![R CMD check](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/<OWNER>/<PKGNAME>/graph/badge.svg)](https://codecov.io/gh/<OWNER>/<PKGNAME>) #(if enabled)
-[![pkgdown](https://img.shields.io/badge/pkgdown-site-blue.svg)](https://<OWNER>.github.io/<PKGNAME>/) #(if enabled)
+[![codecov](https://codecov.io/gh/<OWNER>/<PKGNAME>/graph/badge.svg)](https://codecov.io/gh/<OWNER>/<PKGNAME>)
+[![pkgdown](https://img.shields.io/badge/pkgdown-site-blue.svg)](https://<OWNER>.github.io/<PKGNAME>/)
 ```
 
-**Bioconductor Release:** (not related to this workflow)
+**Bioconductor Release:**
 
 ```markdown
 [![Bioconductor Release Build Status](https://www.bioconductor.org/shields/build/release/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/<PKGNAME>/)
@@ -68,7 +68,7 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 [![Bioconductor Release Dependencies](https://www.bioconductor.org/shields/dependencies/release/<PKGNAME>.svg)](https://bioconductor.org/packages/release/bioc/html/<PKGNAME>.html#since)
 ```
 
-**Bioconductor Devel:** (not related to this workflow)
+**Bioconductor Devel:**
 
 ```markdown
 [![Bioconductor Devel Build Status](https://www.bioconductor.org/shields/build/devel/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/<PKGNAME>/)
