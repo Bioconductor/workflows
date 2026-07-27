@@ -24,7 +24,7 @@ Even if you use the Workflow Generator, you must perform these one-time reposito
 
 **For Codecov:**
 1. **Obtain Codecov Token**: Log in to [Codecov](https://about.codecov.io/), link your repository, and copy the repository upload token.
-2. **Set Repository Secret**: In your GitHub repository, navigate to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**. Create a secret named `CODECOV_TOKEN` containing your token.
+2. **Set Repository Secret**: In your GitHub repository, navigate to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**. Create a secret named `CODECOV_TOKEN` containing your token. Because `ci.yml` uses `secrets: inherit`, the token is passed to the workflow automatically.
 
 **For `pkgdown`:**
 1. **Configure GitHub Pages Source**: In your package repository on GitHub, navigate to **Settings** &rarr; **Pages**. Under **Build and deployment** &rarr; **Source**, select **GitHub Actions** (do NOT select "Deploy from a branch").

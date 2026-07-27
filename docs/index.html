@@ -301,16 +301,6 @@
 
             <div class="form-group">
                 <label>
-                    <input type="checkbox" id="opt-codecov">
-                    <div class="label-text-wrapper">
-                        <span>Enable Codecov</span>
-                        <span class="help-text">Uploads test coverage to Codecov using covr. <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#repository-setup-for-optional-features" target="_blank" style="color: var(--accent-primary); text-decoration: none;">Requires a CODECOV_TOKEN repository secret.</a></span>
-                    </div>
-                </label>
-            </div>
-
-            <div class="form-group">
-                <label>
                     <input type="checkbox" id="opt-cyclocomp">
                     <div class="label-text-wrapper">
                         <span>Enable Cyclocomp Analysis</span>
@@ -351,20 +341,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const elPkgdown = document.getElementById('opt-pkgdown');
-            const elCodecov = document.getElementById('opt-codecov');
             const elCyclocomp = document.getElementById('opt-cyclocomp');
             const elErrorOn = document.getElementById('opt-error-on');
             const elOutput = document.getElementById('yaml-output');
             const btnCopy = document.getElementById('copy-btn');
 
             // Listeners
-            [elPkgdown, elCodecov, elCyclocomp, elErrorOn].forEach(el => {
+            [elPkgdown, elCyclocomp, elErrorOn].forEach(el => {
                 el.addEventListener('change', generateYaml);
             });
 
             function generateYaml() {
                 const hasPkgdown = elPkgdown.checked;
-                const hasCodecov = elCodecov.checked;
                 const hasCyclocomp = elCyclocomp.checked;
                 const errorOn = elErrorOn.value;
 
@@ -378,7 +366,8 @@
                     jobs: {
                         bioccheck: {
                             uses: 'bioconductor/workflows/.github/workflows/bioccheck.yml@main',
-                            with: {}
+                            with: {},
+                            secrets: 'inherit'
                         }
                     }
                 };
@@ -403,18 +392,6 @@
                 // If 'with' is empty, remove it to keep yaml clean
                 if (Object.keys(workflowObj.jobs.bioccheck.with).length === 0) {
                     delete workflowObj.jobs.bioccheck.with;
-                }
-
-                // Add secrets block if codecov is enabled
-                if (hasCodecov) {
-                    // js-yaml handles standard objects well, but for dynamic GHA expressions like ${{ ... }}
-                    // we can just pass it as a string and js-yaml will quote it if needed, or we can use custom type.
-                    // Actually, js-yaml might quote strings with ${{ }}. To avoid quotes, we can post-process or let it quote.
-                    // GHA actually supports quoted strings for expressions, e.g. CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
-                    // But standard unquoted is cleaner. Let's let js-yaml dump it, and we will clean up quotes on expressions if present.
-                    workflowObj.jobs.bioccheck.secrets = {
-                        CODECOV_TOKEN: '${{ secrets.CODECOV_TOKEN }}'
-                    };
                 }
 
                 // Serialize object to YAML
