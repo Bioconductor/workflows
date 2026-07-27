@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-07-24
-- **Deciders:** Bioconductor Core Team, Levi Waldron
+- **Deciders:** Levi Waldron
 
 ## Context and Problem Statement
 
