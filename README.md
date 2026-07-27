@@ -2,6 +2,7 @@
 
 [![Actionlint](https://github.com/bioconductor/workflows/actions/workflows/actionlint.yml/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/actionlint.yml)
 [![Canary Check](https://github.com/bioconductor/workflows/actions/workflows/canary.yml/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/canary.yml)
+[![pages-build-deployment](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment)
 
 This repository (`bioconductor/workflows`) hosts reusable GitHub Actions workflows for R/Bioconductor package development.
 
