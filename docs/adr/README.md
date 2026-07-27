@@ -11,3 +11,5 @@ This directory contains Architecture Decision Records (ADRs) for the `bioconduct
 - [0005. Opt-in Architecture for Non-Core Features (pkgdown, Codecov)](0005-opt-in-architecture-for-non-core-features.md)
 - [0006. Self-Contained Canary Test Architecture](0006-canary-test-architecture.md)
 - [0007. Web App Workflow Generator](0007-web-app-workflow-generator.md)
+- [0008. Opt-in Cyclomatic Complexity Analysis (`cyclocomp`)](0008-cyclocomp-complexity-analysis.md)
+- [0009. Separation of Package Checking from Container Building](0009-separation-of-container-building-concerns.md)
