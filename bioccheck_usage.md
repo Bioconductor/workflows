@@ -46,7 +46,7 @@ When `enable_cyclocomp` is true, the workflow uploads a `cyclocomp-results` CSV 
 
 ### Adding Status Badges to `README.md`
 
-Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name. Note, the "Bioconductor Release" and "Bioconductor Devel" badges are not related to this workflow. Only use the codecov and pkgdown badges if you have enabled those features.
+Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name. Note, the "Bioconductor Release" and "Bioconductor Devel" badges are not related to this workflow. Only use the codecov and pkgdown badges if you have enabled those features. If copying from raw markdown, do not include the code block starts and finishes (` ``` `) in your `README.md` file.
 
 **GitHub Actions:**
 
