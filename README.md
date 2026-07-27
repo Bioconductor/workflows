@@ -8,6 +8,12 @@ This repository (`bioconductor/workflows`) hosts reusable GitHub Actions workflo
 
 **NOTE**: This is pre-release. Please try it and file issues, but some things may not work yet. The first stable release will be tagged `v1`.
 
+## Quick Start
+
+To run the Linux version of the "official" Bioconductor `R CMD check` and `BiocCheck`, just copy [ci.yml](ci.yml) template to `.github/workflows/ci.yml` in your package repository on GitHub. It should "just work".
+
+To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivity from the default "warning") use the web-based [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/) and see the [BiocCheck Usage Guide](bioccheck_usage.md).
+
 ## Overview: Two Complementary Testing Patterns
 
 Two complementary workflows are available depending on your testing goals:
