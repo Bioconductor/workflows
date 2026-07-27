@@ -17,7 +17,7 @@ To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivi
 
 ## `r-universe-org/workflows` for Multi-platform Testing
 
-For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-org/workflows/.github/workflows/build.yml](https://github.com/r-universe-org/workflows#testing-the-build-workflow-in-your-own-github-repository) workflow. To specify that `BiocCheck` should be run during the build, include `organization: bioconductor` in the workflow `with:` parameters, indented the same as the last line in the r-universe README.md workflow example. For packages already in Bioconductor, search the [r-universe package landing pages](https://r-universe.dev/search) for current build status.
+For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-org build.yml](https://github.com/r-universe-org/workflows#testing-the-build-workflow-in-your-own-github-repository) workflow. Specify that `BiocCheck` should be run during the build by adding `organization: bioconductor` to the workflow `with:` parameters; indented the same as the last line in the r-universe README.md workflow example. For packages already in Bioconductor, search the [r-universe package landing pages](https://r-universe.dev/search) for current build status.
 
 ## Documentation
 
