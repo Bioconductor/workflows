@@ -44,6 +44,47 @@ When `enable_cyclocomp` is true, the workflow uploads a `cyclocomp-results` CSV 
   result[order(-result$cyclocomp), ]  # sort by complexity descending
   ```
 
+### Adding Status Badges to `README.md`
+
+Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name.
+
+**GitHub Actions:**
+
+```
+[![R CMD check](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/<OWNER>/<PKGNAME>/graph/badge.svg)](https://codecov.io/gh/<OWNER>/<PKGNAME>) #(if enabled)
+[![pkgdown](https://img.shields.io/badge/pkgdown-site-blue.svg)](https://<OWNER>.github.io/<PKGNAME>/) #(if enabled)
+```
+
+**Bioconductor Release:** (not related to this workflow)
+
+```markdown
+[![Bioconductor Release Build Status](https://www.bioconductor.org/shields/build/release/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/<PKGNAME>/)
+[![Bioconductor Release Availability](https://www.bioconductor.org/shields/availability/release/<PKGNAME>.svg)](https://bioconductor.org/packages/release/bioc/html/<PKGNAME>.html#archives)
+[![Bioconductor Release Downloads](https://www.bioconductor.org/shields/downloads/release/<PKGNAME>.svg)](https://bioconductor.org/packages/stats/bioc/<PKGNAME>/)
+[![Bioconductor Support Activity](https://www.bioconductor.org/shields/posts/<PKGNAME>.svg)](https://support.bioconductor.org/tag/<PKGNAME>)
+[![Bioconductor Years in BioC](https://www.bioconductor.org/shields/years-in-bioc/<PKGNAME>.svg)](https://bioconductor.org/packages/release/bioc/html/<PKGNAME>.html#since)
+[![Bioconductor Release Last Commit](https://www.bioconductor.org/shields/lastcommit/release/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/<PKGNAME>/)
+[![Bioconductor Release Dependencies](https://www.bioconductor.org/shields/dependencies/release/<PKGNAME>.svg)](https://bioconductor.org/packages/release/bioc/html/<PKGNAME>.html#since)
+```
+
+**Bioconductor Devel:** (not related to this workflow)
+
+```markdown
+[![Bioconductor Devel Build Status](https://www.bioconductor.org/shields/build/devel/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/<PKGNAME>/)
+[![Bioconductor Devel Availability](https://www.bioconductor.org/shields/availability/devel/<PKGNAME>.svg)](https://bioconductor.org/packages/devel/bioc/html/<PKGNAME>.html#archives)
+[![Bioconductor Devel Downloads](https://www.bioconductor.org/shields/downloads/devel/<PKGNAME>.svg)](https://bioconductor.org/packages/stats/bioc/<PKGNAME>/)
+[![Bioconductor Support Activity](https://www.bioconductor.org/shields/posts/<PKGNAME>.svg)](https://support.bioconductor.org/tag/<PKGNAME>)
+[![Bioconductor Years in BioC](https://www.bioconductor.org/shields/years-in-bioc/<PKGNAME>.svg)](https://bioconductor.org/packages/devel/bioc/html/<PKGNAME>.html#since)
+[![Bioconductor Devel Last Commit](https://www.bioconductor.org/shields/lastcommit/devel/bioc/<PKGNAME>.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/<PKGNAME>/)
+[![Bioconductor Devel Dependencies](https://www.bioconductor.org/shields/dependencies/devel/<PKGNAME>.svg)](https://bioconductor.org/packages/devel/bioc/html/<PKGNAME>.html#since)
+```
+
+> **Note for Experiment Data Packages**: The Bioconductor badge templates above are formatted for standard **Software** (`bioc`) packages. For **Experiment Data** packages (e.g., [`curatedMetagenomicData`](https://www.bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html)), perform the following search-and-replace updates:
+> - Replace `/bioc/` with `/data-experiment/` in shield SVG URLs (`shields/build/...`, `shields/lastcommit/...`) and check result URLs (`checkResults/.../data-experiment-LATEST/`)
+> - Replace `/bioc/html/` with `/data/experiment/html/` in package landing page URLs
+> - Replace `stats/bioc/` with `stats/data-experiment/` in download statistics URLs
+
 ## Workflow Inputs & Parameters
 
 | Input / Secret | Type | Default | Description |
