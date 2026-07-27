@@ -5,6 +5,7 @@ You are an expert in GitHub Actions and R/Bioconductor continuous integration. W
 ## GitHub Actions Best Practices
 1. **Reserved Secrets**: Never define `GITHUB_TOKEN` under `workflow_call: secrets:`. It is a reserved identifier. Use the native `${{ github.token }}` context instead.
 2. **Secrets in Conditionals**: Never use `secrets.*` directly in an `if:` conditional. Map the secret to a step-level environment variable first, then evaluate the environment variable.
+3. **No `secrets: inherit`**: Never use `secrets: inherit` when calling reusable workflows. Always map required secrets explicitly (e.g., `CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}`) to enforce the Principle of Least Privilege and preserve explicit opt-in boundaries (see ADR 0005).
 
 ## R Scripting
 1. **R.version Types**: `R.version$major` and `R.version$minor` are character objects, not integers. When using `sprintf`, use `%s` (e.g., `sprintf("R-%s", R.version$major)`).

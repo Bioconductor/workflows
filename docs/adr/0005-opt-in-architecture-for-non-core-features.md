@@ -24,6 +24,7 @@ Specifically:
 
 - **Enabled by default**: We could have defaulted `enable_pkgdown` to `true`. This was rejected because it causes the workflow to immediately fail for any user who hasn't explicitly enabled GitHub Actions to deploy to Pages in their repository settings, violating the "just works" principle.
 - **Separate workflows**: We could have split `pkgdown` deployment and coverage into entirely separate reusable workflows (e.g., `pkgdown.yml`, `coverage.yml`). This was rejected because it fragments the CI setup. It is more efficient to run these steps inside the same container where dependencies are already resolved and cached, rather than spinning up entirely new jobs that have to re-download dependencies.
+- **Blanket Secret Inheritance (`secrets: inherit`)**: We considered using `secrets: inherit` in caller workflows to automatically pass repository secrets down to the reusable workflow. This was rejected because it violates the **Principle of Least Privilege** by over-exposing ALL repository secrets (e.g., AWS keys, deployment tokens, PATs) to third-party R package scripts executed during `R CMD check`. Furthermore, it obscures the explicit opt-in boundary established for Codecov uploads. Secrets must always be mapped explicitly (e.g., `CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}`).
 
 ## Consequences
 
