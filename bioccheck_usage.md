@@ -81,7 +81,7 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 ```
 
 > **Note for Experiment Data Packages**: The Bioconductor badge templates above are formatted for standard **Software** (`bioc`) packages. For **Experiment Data** packages (e.g., [`curatedMetagenomicData`](https://www.bioconductor.org/packages/release/data/experiment/html/curatedMetagenomicData.html)), perform the following search-and-replace updates:
-> - Replace `/bioc/` with `/data-experiment/` in shield SVG URLs (`shields/build/...`, `shields/lastcommit/...`) and check result URLs (`checkResults/.../data-experiment-LATEST/`)
+> - In shield SVG URLs (`shields/build/...`, `shields/lastcommit/...`), replace `/bioc/` with `/data-experiment/`; in check result URLs, replace `bioc-LATEST` with `data-experiment-LATEST`.
 > - Replace `/bioc/html/` with `/data/experiment/html/` in package landing page URLs
 > - Replace `stats/bioc/` with `stats/data-experiment/` in download statistics URLs
 
