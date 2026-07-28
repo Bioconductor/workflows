@@ -95,13 +95,15 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
 | `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token for coverage uploads. |
 
-## Versioning Strategy (`v1` vs `main`)
+## Versioning Strategy
 
 When calling reusable GitHub Actions workflows, the portion after `@` can be any git reference (a tag, branch, or SHA):
 
 - **`@main` (Default)**: Points to the default branch (`main`). Recommended during initial development prior to formal major releases.
 - **`@v1`**: Pointing callers to `@v1` relies on a floating major version tag or branch (e.g. `v1`) once major releases begin. Maintainers update `v1` whenever backwards-compatible fixes or updates are published, protecting consuming repos from unexpected breaking changes in future major revisions (`v2`).
 - **`@v1.0.0`**: Pins to an exact release tag for strict reproducibility.
+
+For now, we are going to stick with `@main` to allow rapid propagation of changes to this workflow to all users, and use branches / PRs to test new features. 
 
 ### How to Maintain Version Tags / Branches
 
