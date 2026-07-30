@@ -184,7 +184,7 @@ Below is the complete unified diff comparing `waldronlab/bioc-pr-cmdcheck-pkgdow
 +        id: get-deps
          shell: Rscript {0}
 +        run: |
-+          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest", BiocManager::repositories()))
++          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest", BiocManager::repositories()))
 +          if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
 +          deps <- remotes::dev_package_deps(".", dependencies = TRUE)
 +          saveRDS(deps, ".github/depends.Rds")
@@ -213,7 +213,7 @@ Below is the complete unified diff comparing `waldronlab/bioc-pr-cmdcheck-pkgdow
 +      - name: Install Package Dependencies
          shell: Rscript {0}
 +        run: |
-+          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest", BiocManager::repositories()))
++          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest", BiocManager::repositories()))
 +          remotes::install_local(".", dependencies = TRUE, Ncpus = parallel::detectCores())
 +          BiocManager::install(c("rcmdcheck", "BiocCheck", "covr", "pkgdown"), Ncpus = parallel::detectCores())
 
