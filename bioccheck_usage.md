@@ -3,9 +3,11 @@
 The **Container Check** workflow runs `R CMD check` and `BiocCheck` inside the official `bioconductor/bioconductor_docker` Linux container. Because system libraries and R dependencies are pre-installed in the container, this workflow runs rapidly and is ideal for PRs and continuous commits. It tests *only* on Linux and *only* against one version of Bioconductor that is determined dynamically from the name of the branch that is being tested directly or by Pull Request. This is sufficient for most development and many Bioconductor package maintainers.
 
 ## Key Features
-* **Dynamic Container Matching**:
-  * Pull requests against `RELEASE_X_Y` branches automatically use `bioconductor/bioconductor_docker:RELEASE_X_Y`.
-  * Pull requests or pushes to `devel`, `main`, `master`, or feature branches automatically use `bioconductor/bioconductor_docker:devel`.
+* **Dynamic Container Matching**: The container is chosen from the *target* branch of a pull request, or from the branch that was pushed.
+  * `RELEASE_X_Y` uses `bioconductor/bioconductor_docker:RELEASE_X_Y`.
+  * `devel`, `main`, and `master` use `bioconductor/bioconductor_docker:devel`.
+  * Any other branch name uses `devel` and logs a warning. For a pull request, the branch the PR comes from does not matter: a PR from `my-fix` into `RELEASE_3_20` uses `RELEASE_3_20`. For a push, a feature branch cut from a release branch still gets `devel`.
+  * To use a different container, set the `bioc_version` input (e.g. `RELEASE_3_20`). It overrides the branch name.
 * **R Dependency Caching**: Caches R package dependencies in `/usr/local/lib/R/site-library` keyed on `depends.Rds` and R version.
 * **Integrated Checks**: Executes `R CMD check` (configurable error threshold via `error_on`) and `BiocCheck` (with `quit-with-status = TRUE`).
 * **Optional Features**: Test coverage reporting via Codecov, cyclomatic complexity analysis via `cyclocomp`, and `pkgdown` site build/deployment.

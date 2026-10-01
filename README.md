@@ -19,6 +19,8 @@ To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivi
 
 For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-org build.yml](https://github.com/r-universe-org/workflows#testing-the-build-workflow-in-your-own-github-repository) workflow. Specify that `BiocCheck` should be run during the build by adding `organization: bioconductor` to the workflow `with:` parameters; indented the same as the last line in the r-universe README.md workflow example. For packages already in Bioconductor, search the [r-universe package landing pages](https://r-universe.dev/search) for current build status.
 
+**Bioconductor version**: with the example `universe: ${{ github.repository_owner }}`, `BiocCheck` and dependencies use **Bioc-devel**. Bioc-release is used only when `universe` is `bioc-release`, which is not set automatically (untested in a personal repository). The R CMD check matrix (R devel, release, oldrel) is independent of this setting.
+
 ## Documentation
 
 The documentation for these workflows has been separated into distinct files for clarity:
