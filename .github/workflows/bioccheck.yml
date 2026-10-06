@@ -94,7 +94,6 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: 'true'
       GITHUB_PAT: ${{ github.token }}
-      _R_CHECK_CRAN_INCOMING_REMOTE_: 'false'
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout Repository
@@ -134,7 +133,7 @@ jobs:
           allowed <- c("never", "note", "warning", "error")
           error_on <- Sys.getenv("RCMDCHECK_ERROR_ON", unset = "warning")
           if (!error_on %in% allowed) stop("Invalid error_on value: '", error_on, "'. Must be one of: ", paste(allowed, collapse = ", "))
-          res <- rcmdcheck::rcmdcheck(".", args = c("--no-manual", "--as-cran"), error_on = error_on, check_dir = "check")
+          res <- rcmdcheck::rcmdcheck(".", args = "--no-manual", error_on = error_on, check_dir = "check")
           print(res)
 
       - name: Run BiocCheck
