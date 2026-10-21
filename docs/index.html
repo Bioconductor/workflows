@@ -294,7 +294,7 @@
                     <input type="checkbox" id="opt-pkgdown">
                     <div class="label-text-wrapper">
                         <span>Enable pkgdown Site</span>
-                        <span class="help-text">Builds and deploys a pkgdown site to GitHub Pages on release branch pushes. <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#repository-setup-for-optional-features" target="_blank" style="color: var(--accent-primary); text-decoration: none;">Requires one-time repository setup.</a></span>
+                        <span class="help-text">Builds and deploys a pkgdown site to GitHub Pages on release branch pushes. <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#repository-configuration-for-optional-features" target="_blank" style="color: var(--accent-primary); text-decoration: none;">Requires one-time repository setup.</a></span>
                     </div>
                 </label>
             </div>
@@ -304,7 +304,7 @@
                     <input type="checkbox" id="opt-codecov">
                     <div class="label-text-wrapper">
                         <span>Enable Codecov</span>
-                        <span class="help-text">Uploads test coverage to Codecov using covr. <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#repository-setup-for-optional-features" target="_blank" style="color: var(--accent-primary); text-decoration: none;">Requires a CODECOV_TOKEN repository secret.</a></span>
+                        <span class="help-text">Uploads test coverage to Codecov using covr. <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#repository-configuration-for-optional-features" target="_blank" style="color: var(--accent-primary); text-decoration: none;">Requires a CODECOV_TOKEN repository secret.</a></span>
                     </div>
                 </label>
             </div>
@@ -410,11 +410,7 @@
 
                 // Add secrets block if codecov is enabled
                 if (hasCodecov) {
-                    // js-yaml handles standard objects well, but for dynamic GHA expressions like ${{ ... }}
-                    // we can just pass it as a string and js-yaml will quote it if needed, or we can use custom type.
-                    // Actually, js-yaml might quote strings with ${{ }}. To avoid quotes, we can post-process or let it quote.
-                    // GHA actually supports quoted strings for expressions, e.g. CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
-                    // But standard unquoted is cleaner. Let's let js-yaml dump it, and we will clean up quotes on expressions if present.
+                    // js-yaml quotes the ${{ }} expression; the cleanup below removes the quotes.
                     workflowObj.jobs.bioccheck.secrets = {
                         CODECOV_TOKEN: '${{ secrets.CODECOV_TOKEN }}'
                     };

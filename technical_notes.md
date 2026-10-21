@@ -23,18 +23,25 @@ It uses `error_on: 'never'` so that expected BiocCheck notes from the internal s
 
 This repo contains a [DESCRIPTION](DESCRIPTION) file and [basic vignette](vignettes/canary.Rmd) to make it a valid R package that can be checked without error (with enough disabling flags invoked).
 
-## Release & Version Tagging Checklist
+## Versioning Strategy
 
-When cutting a formal major release (e.g. `v1`, `v2`) or transitioning default references, maintainers must update the following four locations in lockstep:
+The portion after `@` in a `uses:` line can be any git reference (a tag, branch, or SHA):
 
-1. **`ci.yml`**: Update the template workflow call tag (`bioconductor/workflows/.github/workflows/bioccheck.yml@v1`).
-2. **`docs/index.html`**: Update the `workflowObj.jobs.bioccheck.uses` template string (`uses: 'bioconductor/workflows/.github/workflows/bioccheck.yml@v1'`).
-3. **`README.md`**: Update the Overview table workflow reference.
-4. **`bioccheck_usage.md`**: Update the Versioning Strategy section notes and recommendations.
+- **`@main`**: Points to the default branch. This is what `ci.yml` and the Workflow Generator currently emit, so that changes propagate to all users immediately. New features are tested on branches and PRs before merging.
+- **`@v1`**: A floating major version tag, to be introduced with the first stable release. Maintainers move `v1` whenever backwards-compatible fixes are published, protecting callers from breaking changes in `v2`.
+- **`@v1.0.0`**: Pins to an exact release tag for strict reproducibility.
 
-### Git Tag Creation Commands
+### Release Checklist
+
+When cutting a major release (e.g. `v1`) or changing the default reference, update these three locations in lockstep:
+
+1. **`ci.yml`**: the `uses:` line.
+2. **`docs/index.html`**: the `workflowObj.jobs.bioccheck.uses` template string.
+3. **`technical_notes.md`**: this section.
+
+Then create or move the floating tag:
+
 ```bash
-# Create or update the floating major version tag (e.g., v1)
 git tag -fa v1 -m "Release v1"
 git push origin v1 --force
 ```

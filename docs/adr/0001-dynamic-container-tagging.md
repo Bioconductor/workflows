@@ -23,7 +23,7 @@ Specifically:
 
 - **Hardcoding `devel`**: This is what previous iterations of the workflow did. It was rejected because it forces developers to test release bugfixes against unstable `devel` dependencies, complicating the backporting process.
 - **Requiring manual input**: We could have forced maintainers to explicitly define the container tag in their `.github/workflows/check-bioc.yml` file. This was rejected because it adds boilerplate and increases the chance of human error (e.g., forgetting to update the tag when branching for a new release).
-- **Matrix testing across multiple versions**: Testing against both `devel` and the current release simultaneously. This was rejected for the "Rapid Feedback Check" workflow to keep CI times fast. Maintainers wanting multi-environment testing are directed to the comprehensive R-Universe workflow instead.
+- **Matrix testing across multiple versions**: Testing against both `devel` and the current release simultaneously. This was rejected for the Rapid BiocCheck Workflow to keep CI times fast. Maintainers wanting multi-environment testing are directed to the comprehensive R-Universe workflow instead.
 
 ## Consequences
 
