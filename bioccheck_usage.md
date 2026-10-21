@@ -1,6 +1,6 @@
-# Rapid BiocCheck Workflow (`bioccheck.yml`)
+# BiocCheck Rapid Workflow (`bioccheck.yml`)
 
-The **Rapid BiocCheck Workflow** runs `R CMD check` and `BiocCheck` inside the official `bioconductor/bioconductor_docker` Linux container. Because system libraries and R dependencies are pre-installed in the container, it runs quickly and is ideal for PRs and continuous commits. It tests *only* on Linux and *only* against one version of Bioconductor, chosen from the branch name. This is sufficient for most development and many Bioconductor package maintainers.
+The **BiocCheck Rapid Workflow** runs `R CMD check` and `BiocCheck` inside the official `bioconductor/bioconductor_docker` Linux container. Because system libraries and R dependencies are pre-installed in the container, it runs quickly and is ideal for PRs and continuous commits. It tests *only* on Linux and *only* against one version of Bioconductor, chosen from the branch name. This is sufficient for most development and many Bioconductor package maintainers.
 
 ## How the Container Is Chosen
 

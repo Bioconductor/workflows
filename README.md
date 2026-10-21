@@ -4,7 +4,7 @@
 [![Canary Check](https://github.com/bioconductor/workflows/actions/workflows/canary.yml/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/canary.yml)
 [![pages-build-deployment](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment)
 
-This repository (`bioconductor/workflows`) hosts the **Rapid BiocCheck Workflow**, a reusable GitHub Actions workflow for R/Bioconductor package development.
+This repository (`bioconductor/workflows`) hosts the **BiocCheck Rapid Workflow**, a reusable GitHub Actions workflow for R/Bioconductor package development.
 
 **NOTE**: This is pre-release. Please try it and file issues, but some things may not work yet. The first stable release will be tagged `v1`.
 

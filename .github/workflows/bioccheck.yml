@@ -1,4 +1,4 @@
-name: Rapid BiocCheck Workflow
+name: BiocCheck Rapid Workflow
 
 on:
   workflow_call:
