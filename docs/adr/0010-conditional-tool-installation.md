@@ -1,6 +1,6 @@
 # 0010. Install Optional Tools Only When Used
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-21
 - **Deciders:** Levi Waldron
 
