@@ -11,11 +11,19 @@ This repository (`bioconductor/workflows`) hosts reusable GitHub Actions workflo
 
 ## Quick Start
 
-To run the Linux version of the "official" Bioconductor `R CMD check` and `BiocCheck`, just copy [ci.yml](ci.yml) template to `.github/workflows/ci.yml` in your package repository on GitHub. It should "just work".
+To run the Linux version of the "official" Bioconductor `R CMD check` and `BiocCheck`, just copy [ci.yml](ci.yml) template to `.github/workflows/ci.yml` in your package repository on GitHub. It should "just work" and will automatically check against the right Bioconductor version based on the name of the branch that is changed or targeted by a pull request (e.g. RELEASE_X_Y checks against that release; devel/main/anything else checks against devel).
 
-To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivity from the default "warning") use the web-based [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/) and see the [BiocCheck Usage Guide](bioccheck_usage.md).
+To show the check status at the top of your package's `README.md`, add this badge, replacing `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your repository name:
 
-## `r-universe-org/workflows` for Multi-platform Testing
+```markdown
+[![R CMD check](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml)
+```
+
+For Codecov, pkgdown, and Bioconductor build badges, see [Adding Status Badges](bioccheck_usage.md#adding-status-badges-to-readmemd).
+
+To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivity from the default "warning") use the [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/).
+
+## Multi-platform Testing using `r-universe-org/workflows`
 
 For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-org build.yml](https://github.com/r-universe-org/workflows#testing-the-build-workflow-in-your-own-github-repository) workflow. Specify that `BiocCheck` should be run during the build by adding `organization: bioconductor` to the workflow `with:` parameters; indented the same as the last line in the r-universe README.md workflow example. For packages already in Bioconductor, search the [r-universe package landing pages](https://r-universe.dev/search) for current build status.
 
@@ -26,5 +34,5 @@ For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-or
 The documentation for these workflows has been separated into distinct files for clarity:
 
 - [**BiocCheck Usage**](bioccheck_usage.md): Comprehensive instructions for using the `bioccheck.yml` reusable workflow, including test coverage and `pkgdown` setup.
-- [**Workflow Comparison**](workflow_comparison.md): A detailed comparison of the two workflows to help you choose the right one for your needs.
+- [**Workflow Comparison**](workflow_comparison.md): A detailed comparison of this workflow vs r-universe to help you choose the right one for your needs.
 - [**Technical Notes**](technical_notes.md): Software architecture, ADRs, internal test flows (`canary.yml`, `actionlint.yml`), and guidelines for contributors.
