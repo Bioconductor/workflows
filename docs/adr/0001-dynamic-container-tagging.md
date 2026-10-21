@@ -1,4 +1,4 @@
-# 0001. Use of Dynamic Matrix Container Tagging
+# 0001. Use of Dynamic Container Tagging
 
 - **Status:** Accepted
 - **Date:** 2026-07-24
@@ -12,7 +12,7 @@ How do we ensure that package tests run in the correct Bioconductor container ve
 
 ## Decision
 
-We will dynamically resolve the container tag during a `set-matrix` setup job based on the Git ref name.
+We will dynamically resolve the container tag during a `setup` job (originally named `set-matrix`) based on the Git ref name.
 
 Specifically:
 - If a pull request or push targets a branch prefixed with `RELEASE_`, the workflow will use `bioconductor/bioconductor_docker:RELEASE_X_Y`.
@@ -29,4 +29,4 @@ Specifically:
 
 - **Easier backports**: Developers can confidently push to `RELEASE_X_Y` branches knowing the CI will test against the correct environment.
 - **Reduced false failures**: Package tests won't spuriously fail due to breaking changes in upstream `devel` dependencies when working on stable release branches.
-- **Slightly more complex workflow**: The CI pipeline now requires a preliminary `set-matrix` job to compute the tag before the main `check` job can run. This adds a few seconds to the total CI runtime and makes the YAML slightly harder to read.
+- **Slightly more complex workflow**: The CI pipeline now requires a preliminary `setup` job to compute the tag before the main `check` job can run. This adds a few seconds to the total CI runtime and makes the YAML slightly harder to read.

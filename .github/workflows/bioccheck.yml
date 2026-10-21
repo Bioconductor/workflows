@@ -29,15 +29,15 @@ on:
         required: false
 
 jobs:
-  set-matrix:
+  setup:
     runs-on: ubuntu-latest
     outputs:
-      docker_tag: ${{ steps.matrix.outputs.docker_tag }}
-      is_release_branch: ${{ steps.matrix.outputs.is_release_branch }}
-      checkout_ref: ${{ steps.matrix.outputs.checkout_ref }}
+      docker_tag: ${{ steps.resolve.outputs.docker_tag }}
+      is_release_branch: ${{ steps.resolve.outputs.is_release_branch }}
+      checkout_ref: ${{ steps.resolve.outputs.checkout_ref }}
     steps:
-      - name: Set Matrix Variables
-        id: matrix
+      - name: Resolve Container Tag and Checkout Ref
+        id: resolve
         run: |
           OVERRIDE_TAG="${{ inputs.bioc_version }}"
 
@@ -77,29 +77,28 @@ jobs:
           fi
 
           {
-            echo "docker_tag=[\"${DOCKER_TAG}\"]"
+            echo "docker_tag=${DOCKER_TAG}"
             echo "is_release_branch=${IS_RELEASE}"
             echo "checkout_ref=${CHECKOUT_REF}"
           } >> "$GITHUB_OUTPUT"
           echo "Resolved DOCKER_TAG=${DOCKER_TAG}, IS_RELEASE=${IS_RELEASE}, CHECKOUT_REF=${CHECKOUT_REF}"
 
   check:
-    needs: set-matrix
+    needs: setup
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker_tag: ${{ fromJson(needs.set-matrix.outputs.docker_tag) }}
     container:
-      image: bioconductor/bioconductor_docker:${{ matrix.docker_tag }}
+      image: bioconductor/bioconductor_docker:${{ needs.setup.outputs.docker_tag }}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: 'true'
       GITHUB_PAT: ${{ github.token }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      # pkgdown is built only on pushes to release branches, so it is installed only then.
+      INSTALL_PKGDOWN: ${{ inputs.enable_pkgdown && github.event_name != 'pull_request' && needs.setup.outputs.is_release_branch == 'true' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
         with:
-          ref: ${{ needs.set-matrix.outputs.checkout_ref }}
+          ref: ${{ needs.setup.outputs.checkout_ref }}
 
       - name: Query R and System Dependencies
         id: get-deps
@@ -116,15 +115,23 @@ jobs:
         with:
           path: /usr/local/lib/R/site-library
           # The "-1-" segment is a manual cache version; bump it to discard all existing caches.
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          # INSTALL_PKGDOWN is part of the key because a cache saved by a run without pkgdown is never re-saved.
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}-pkgdown-${{ env.INSTALL_PKGDOWN }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install Package Dependencies
+        env:
+          ENABLE_CYCLOCOMP: ${{ inputs.enable_cyclocomp }}
         shell: Rscript {0}
         run: |
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest", BiocManager::repositories()))
           remotes::install_local(".", dependencies = TRUE, Ncpus = parallel::detectCores())
-          BiocManager::install(c("rcmdcheck", "BiocCheck", "covr", "pkgdown", "cyclocomp"), Ncpus = parallel::detectCores())
+          # Only install the tools for features that are used in this run.
+          pkgs <- c("rcmdcheck", "BiocCheck")
+          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) pkgs <- c(pkgs, "covr")
+          if (Sys.getenv("INSTALL_PKGDOWN") == "true") pkgs <- c(pkgs, "pkgdown")
+          if (Sys.getenv("ENABLE_CYCLOCOMP") == "true") pkgs <- c(pkgs, "cyclocomp")
+          BiocManager::install(pkgs, Ncpus = parallel::detectCores())
 
       - name: Run R CMD check
         env:
@@ -148,7 +155,7 @@ jobs:
           )
 
       - name: Test Coverage
-        if: success() && needs.set-matrix.outputs.is_release_branch == 'false' && env.CODECOV_TOKEN != ''
+        if: success() && needs.setup.outputs.is_release_branch == 'false' && env.CODECOV_TOKEN != ''
         shell: Rscript {0}
         run: |
           cov <- covr::package_coverage()
@@ -182,25 +189,13 @@ jobs:
           if-no-files-found: warn
 
       - name: Build pkgdown Site
-        if: >-
-          ${{
-            success()
-            && inputs.enable_pkgdown
-            && github.event_name != 'pull_request'
-            && needs.set-matrix.outputs.is_release_branch == 'true'
-          }}
+        if: success() && env.INSTALL_PKGDOWN == 'true'
         shell: Rscript {0}
         run: |
           pkgdown::build_site()
 
       - name: Upload pkgdown artifact
-        if: >-
-          ${{
-            success()
-            && inputs.enable_pkgdown
-            && github.event_name != 'pull_request'
-            && needs.set-matrix.outputs.is_release_branch == 'true'
-          }}
+        if: success() && env.INSTALL_PKGDOWN == 'true'
         uses: actions/upload-pages-artifact@v5
         with:
           path: docs
@@ -208,12 +203,12 @@ jobs:
   deploy:
     needs:
       - check
-      - set-matrix
+      - setup
     if: >-
       ${{
         inputs.enable_pkgdown
         && github.event_name != 'pull_request'
-        && needs.set-matrix.outputs.is_release_branch == 'true'
+        && needs.setup.outputs.is_release_branch == 'true'
       }}
     # NOTE: The caller workflow must grant `pages: write` and `id-token: write` permissions when `enable_pkgdown` is enabled.
     environment:

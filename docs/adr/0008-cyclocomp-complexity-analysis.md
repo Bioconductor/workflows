@@ -1,6 +1,6 @@
 # 0008. Opt-in Cyclomatic Complexity Analysis (cyclocomp)
 
-- **Status:** Accepted
+- **Status:** Accepted; the "Unconditional Installation" decision, the rejected "Conditional Installation" alternative, and the "Simple Maintenance" consequence are superseded by [ADR 0010](0010-conditional-tool-installation.md)
 - **Date:** 2026-07-24
 - **Deciders:** Levi Waldron
 

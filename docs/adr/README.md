@@ -4,7 +4,7 @@ This directory contains Architecture Decision Records (ADRs) for the `bioconduct
 
 ## Index
 
-- [0001. Use of Dynamic Matrix Container Tagging](0001-dynamic-container-tagging.md)
+- [0001. Use of Dynamic Container Tagging](0001-dynamic-container-tagging.md)
 - [0002. Reject Source-Based Execution of BiocCheck](0002-source-based-execution-of-bioccheck.md)
 - [0003. Configurable `rcmdcheck` Severity (`error_on`)](0003-configurable-rcmdcheck-severity.md)
 - [0004. In-place Package Installation for Dependencies](0004-in-place-package-installation.md)
@@ -13,3 +13,4 @@ This directory contains Architecture Decision Records (ADRs) for the `bioconduct
 - [0007. Web App Workflow Generator](0007-web-app-workflow-generator.md)
 - [0008. Opt-in Cyclomatic Complexity Analysis (`cyclocomp`)](0008-cyclocomp-complexity-analysis.md)
 - [0009. Separation of Package Checking from Container Building](0009-separation-of-container-building-concerns.md)
+- [0010. Install Optional Tools Only When Used](0010-conditional-tool-installation.md) (Proposed)
