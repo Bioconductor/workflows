@@ -13,9 +13,6 @@ on:
 
 jobs:
   canary:
-    permissions:
-      pages: write
-      id-token: write
     uses: ./.github/workflows/bioccheck.yml
     with:
       error_on: 'never'

@@ -4,14 +4,13 @@
 [![Canary Check](https://github.com/bioconductor/workflows/actions/workflows/canary.yml/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/canary.yml)
 [![pages-build-deployment](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bioconductor/workflows/actions/workflows/pages/pages-build-deployment)
 
-This repository (`bioconductor/workflows`) hosts reusable GitHub Actions workflows for R/Bioconductor package development.
-
+This repository (`bioconductor/workflows`) hosts the **BiocCheck Rapid Workflow**, a reusable GitHub Actions workflow for R/Bioconductor package development.
 
 **NOTE**: This is pre-release. Please try it and file issues, but some things may not work yet. The first stable release will be tagged `v1`.
 
 ## Quick Start
 
-To run the Linux version of the "official" Bioconductor `R CMD check` and `BiocCheck`, just copy [ci.yml](ci.yml) template to `.github/workflows/ci.yml` in your package repository on GitHub. It should "just work" and will automatically check against the right Bioconductor version based on the name of the branch that is changed or targeted by a pull request (e.g. RELEASE_X_Y checks against that release; devel/main/anything else checks against devel).
+To run `R CMD check` and `BiocCheck` in the official Bioconductor Linux container, just copy [ci.yml](ci.yml) template to `.github/workflows/ci.yml` in your package repository on GitHub. It should "just work" and will automatically check against the right Bioconductor version based on the name of the branch that is changed or targeted by a pull request (e.g. RELEASE_X_Y checks against that release; devel/main/anything else checks against devel).
 
 To show the check status at the top of your package's `README.md`, add this badge, replacing `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your repository name:
 
@@ -33,6 +32,5 @@ For Multi-OS (Linux, macOS, Windows, WebAssembly) checks, use the [r-universe-or
 
 The documentation for these workflows has been separated into distinct files for clarity:
 
-- [**BiocCheck Usage**](bioccheck_usage.md): Comprehensive instructions for using the `bioccheck.yml` reusable workflow, including test coverage and `pkgdown` setup.
-- [**Workflow Comparison**](workflow_comparison.md): A detailed comparison of this workflow vs r-universe to help you choose the right one for your needs.
-- [**Technical Notes**](technical_notes.md): Software architecture, ADRs, internal test flows (`canary.yml`, `actionlint.yml`), and guidelines for contributors.
+- [**BiocCheck Usage**](bioccheck_usage.md): Instructions for using the `bioccheck.yml` reusable workflow, including test coverage, `cyclocomp`, `pkgdown` setup, and status badges.
+- [**Technical Notes**](technical_notes.md): Software architecture, ADRs, internal test workflows (`canary.yml`, `actionlint.yml`), versioning, and guidelines for contributors.

@@ -1,4 +1,4 @@
-name: Bioc Container Check
+name: BiocCheck Rapid Workflow
 
 on:
   workflow_call:
@@ -53,7 +53,7 @@ jobs:
             fi
 
             # Derive the container tag from the branch name.
-            # Valid ghcr.io/bioconductor/bioconductor_docker tags: devel, RELEASE_X_Y
+            # Valid bioconductor/bioconductor_docker tags: devel, RELEASE_X_Y
             if [[ "${REF_NAME}" =~ ^RELEASE_ ]]; then
               DOCKER_TAG="${REF_NAME}"
             elif [[ "${REF_NAME}" == "devel" || "${REF_NAME}" == "master" || "${REF_NAME}" == "main" ]]; then
@@ -115,6 +115,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: /usr/local/lib/R/site-library
+          # The "-1-" segment is a manual cache version; bump it to discard all existing caches.
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
@@ -204,7 +205,6 @@ jobs:
         with:
           path: docs
 
-  # Note: Inherits permissions from caller. Caller must grant 'pages: write' and 'id-token: write' when enable_pkgdown is true.
   deploy:
     needs:
       - check

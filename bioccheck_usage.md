@@ -1,16 +1,17 @@
-# Rapid Feedback Container Check (`bioconductor/bioccheck` workflow)
+# BiocCheck Rapid Workflow (`bioccheck.yml`)
 
-The **Container Check** workflow runs `R CMD check` and `BiocCheck` inside the official `bioconductor/bioconductor_docker` Linux container. Because system libraries and R dependencies are pre-installed in the container, this workflow runs rapidly and is ideal for PRs and continuous commits. It tests *only* on Linux and *only* against one version of Bioconductor that is determined dynamically from the name of the branch that is being tested directly or by Pull Request. This is sufficient for most development and many Bioconductor package maintainers.
+The **BiocCheck Rapid Workflow** runs `R CMD check` and `BiocCheck` inside the official `bioconductor/bioconductor_docker` Linux container. Because system libraries and R dependencies are pre-installed in the container, it runs quickly and is ideal for PRs and continuous commits. It tests *only* on Linux and *only* against one version of Bioconductor, chosen from the branch name. This is sufficient for most development and many Bioconductor package maintainers.
 
-## Key Features
-* **Dynamic Container Matching**: The container is chosen from the *target* branch of a pull request, or from the branch that was pushed.
-  * `RELEASE_X_Y` uses `bioconductor/bioconductor_docker:RELEASE_X_Y`.
-  * `devel`, `main`, and `master` use `bioconductor/bioconductor_docker:devel`.
-  * Any other branch name uses `devel` and logs a warning. For a pull request, the branch the PR comes from does not matter: a PR from `my-fix` into `RELEASE_3_20` uses `RELEASE_3_20`. For a push, a feature branch cut from a release branch still gets `devel`.
-  * To use a different container, set the `bioc_version` input (e.g. `RELEASE_3_20`). It overrides the branch name.
-* **R Dependency Caching**: Caches R package dependencies in `/usr/local/lib/R/site-library` keyed on `depends.Rds` and R version.
-* **Integrated Checks**: Executes `R CMD check` (configurable error threshold via `error_on`) and `BiocCheck` (with `quit-with-status = TRUE`).
-* **Optional Features**: Test coverage reporting via Codecov, cyclomatic complexity analysis via `cyclocomp`, and `pkgdown` site build/deployment.
+## How the Container Is Chosen
+
+The container is chosen from the *target* branch of a pull request, or from the branch that was pushed.
+
+* `RELEASE_X_Y` uses `bioconductor/bioconductor_docker:RELEASE_X_Y`.
+* `devel`, `main`, and `master` use `bioconductor/bioconductor_docker:devel`.
+* Any other branch name uses `devel` and logs a warning. For a pull request, the branch the PR comes from does not matter: a PR from `my-fix` into `RELEASE_3_20` uses `RELEASE_3_20`. For a push, a feature branch cut from a release branch still gets `devel`.
+* To use a different container, set the `bioc_version` input (e.g. `RELEASE_3_20`). It overrides the branch name.
+
+R package dependencies are cached between runs, keyed on the package's dependency list and the R version.
 
 ## Usage
 
@@ -24,7 +25,7 @@ To add additional features like `COVR` and `pkgdown`, or change error sensitivit
 
 Even if you use the Workflow Generator, you must perform these one-time repository settings to use optional features:
 
-**For Codecov:**
+**For Codecov** (coverage is uploaded on pushes and PRs to non-release branches only):
 1. **Obtain Codecov Token**: Log in to [Codecov](https://about.codecov.io/), link your repository, and copy the repository upload token.
 2. **Set Repository Secret**: In your GitHub repository, navigate to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**. Create a secret named `CODECOV_TOKEN` containing your token.
 
@@ -48,11 +49,11 @@ When `enable_cyclocomp` is true, the workflow uploads a `cyclocomp-results` CSV 
 
 ### Adding Status Badges to `README.md`
 
-Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name. Note, the "Bioconductor Release" and "Bioconductor Devel" badges are not related to this workflow. Only use the codecov and pkgdown badges if you have enabled those features. If copying from raw markdown, do not include the code block starts and finishes (` ``` `) in your `README.md` file.
+Here's a full set of badges for the top of your package's `README.md`. Replace `<OWNER>` with your GitHub organization or username and `<PKGNAME>` with your package name. Note, the "Bioconductor Release" and "Bioconductor Devel" badges are not related to this workflow. Only use the codecov and pkgdown badges if you have enabled those features.
 
 **GitHub Actions:**
 
-```
+```markdown
 [![R CMD check](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/<OWNER>/<PKGNAME>/graph/badge.svg)](https://codecov.io/gh/<OWNER>/<PKGNAME>)
 [![pkgdown](https://img.shields.io/badge/pkgdown-site-blue.svg)](https://<OWNER>.github.io/<PKGNAME>/)
@@ -97,22 +98,6 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
 | `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token for coverage uploads. |
 
-## Versioning Strategy
+## Which Version to Use
 
-When calling reusable GitHub Actions workflows, the portion after `@` can be any git reference (a tag, branch, or SHA):
-
-- **`@main` (Default)**: Points to the default branch (`main`). Recommended during initial development prior to formal major releases.
-- **`@v1`**: Pointing callers to `@v1` relies on a floating major version tag or branch (e.g. `v1`) once major releases begin. Maintainers update `v1` whenever backwards-compatible fixes or updates are published, protecting consuming repos from unexpected breaking changes in future major revisions (`v2`).
-- **`@v1.0.0`**: Pins to an exact release tag for strict reproducibility.
-
-For now, we are going to stick with `@main` to allow rapid propagation of changes to this workflow to all users, and use branches / PRs to test new features. 
-
-### How to Maintain Version Tags / Branches
-
-1. Keep `main` as the default development branch.
-2. When releasing a major version, create a tag or branch named `v1` pointing to `main`:
-   ```bash
-   # Create or move the floating v1 tag
-   git tag -fa v1 -m "Release v1"
-   git push origin v1 --force
-   ```
+Use `@main` for now, as in the `ci.yml` template. A floating `@v1` tag will be introduced with the first stable release. See [Versioning Strategy](technical_notes.md#versioning-strategy).
