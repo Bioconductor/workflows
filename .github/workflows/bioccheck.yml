@@ -128,7 +128,7 @@ jobs:
           remotes::install_local(".", dependencies = TRUE, Ncpus = parallel::detectCores())
           # Only install the tools for features that are used in this run.
           pkgs <- c("rcmdcheck", "BiocCheck")
-          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) pkgs <- c(pkgs, "covr")
+          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) pkgs <- c(pkgs, "covr", "xml2")
           if (Sys.getenv("INSTALL_PKGDOWN") == "true") pkgs <- c(pkgs, "pkgdown")
           if (Sys.getenv("ENABLE_CYCLOCOMP") == "true") pkgs <- c(pkgs, "cyclocomp")
           BiocManager::install(pkgs, Ncpus = parallel::detectCores())
@@ -154,12 +154,43 @@ jobs:
             `quit-with-status` = TRUE, `no-check-bioc-help` = TRUE
           )
 
+      # Coverage problems never fail the check (ADR 0011).
       - name: Test Coverage
+        id: coverage
         if: success() && needs.setup.outputs.is_release_branch == 'false' && env.CODECOV_TOKEN != ''
+        continue-on-error: true
         shell: Rscript {0}
         run: |
           cov <- covr::package_coverage()
-          covr::codecov(coverage = cov, token = Sys.getenv("CODECOV_TOKEN"))
+          print(cov)
+          covr::to_cobertura(cov, filename = "coverage.xml")
+
+      # The Codecov action verifies its uploader with gpg, which the
+      # Bioconductor container doesn't include.
+      - name: Install gpg for Codecov
+        id: gpg
+        if: steps.coverage.outcome == 'success' && env.CODECOV_TOKEN != ''
+        continue-on-error: true
+        shell: bash
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          command -v gpg >/dev/null 2>&1 || {
+            apt-get update -qq && apt-get install -y -qq --no-install-recommends gnupg
+          }
+
+      # The Codecov action, unlike covr::codecov(), accepts an organization's
+      # global upload token as well as a repository token (ADR 0011).
+      - name: Upload Coverage to Codecov
+        if: steps.gpg.outcome == 'success'
+        continue-on-error: true
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          disable_search: true
+          disable_telem: true
+          fail_ci_if_error: false
 
       - name: Run Cyclocomp
         if: inputs.enable_cyclocomp == true

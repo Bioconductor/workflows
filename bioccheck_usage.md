@@ -26,7 +26,7 @@ To add additional features like `COVR` and `pkgdown`, or change error sensitivit
 Even if you use the Workflow Generator, you must perform these one-time repository settings to use optional features:
 
 **For Codecov** (coverage is uploaded on pushes and PRs to non-release branches only):
-1. **Obtain Codecov Token**: Log in to [Codecov](https://about.codecov.io/), link your repository, and copy the repository upload token.
+1. **Obtain Codecov Token**: Log in to [Codecov](https://about.codecov.io/), link your repository, and copy the repository upload token. Alternatively, an organization admin can copy the organization's global upload token (organization settings in Codecov), which works for every repository in the organization; store it once as a GitHub organization secret named `CODECOV_TOKEN`. Paste only the token itself, not `CODECOV_TOKEN=...`.
 2. **Set Repository Secret**: In your GitHub repository, navigate to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**. Create a secret named `CODECOV_TOKEN` containing your token.
 
 **For `pkgdown`:**
@@ -96,7 +96,7 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | `enable_cyclocomp` | `boolean` | `false` | Enable cyclomatic complexity analysis via cyclocomp. |
 | `error_on` | `string` | `"warning"` | Error policy for `rcmdcheck` (`"never"`, `"note"`, `"warning"`, `"error"`). |
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
-| `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token for coverage uploads. |
+| `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token (repository or organization global upload token). Uploads coverage to Codecov when set. |
 
 ## Which Version to Use
 
