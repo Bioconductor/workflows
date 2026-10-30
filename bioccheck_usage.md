@@ -33,6 +33,15 @@ Even if you use the Workflow Generator, you must perform these one-time reposito
 1. **Configure GitHub Pages Source**: In your package repository on GitHub, navigate to **Settings** &rarr; **Pages**. Under **Build and deployment** &rarr; **Source**, select **GitHub Actions** (do NOT select "Deploy from a branch").
 2. **Allow Deployment Branches**: Navigate to **Settings** &rarr; **Environments** &rarr; **github-pages**. Under **Deployment branches**, change the rule to **All branches** (or add `RELEASE_*` to the allowed branch pattern) so that GitHub allows deployments from Bioconductor release branches.
 
+### Test Coverage
+
+Two independent options, which can be used together. Both skip release branches, and coverage problems never fail the check.
+
+- **Codecov upload**: pass a `CODECOV_TOKEN` secret (see above). Coverage is uploaded to Codecov, which provides a badge, history and pull request comments.
+- **Coverage report without Codecov**: set `enable_coverage_report: true`. No account or token is needed, and it works on pull requests from forks. The run's summary page shows the total and per-file coverage, and the line-by-line HTML report is saved as the `coverage-report` artifact: download it from the **Artifacts** section at the bottom of the run page and open `index.html`.
+
+Coverage runs the test suite a second time with instrumentation, so either option adds roughly the time of one more test run.
+
 ### Using the Cyclocomp Artifact
 
 When `enable_cyclocomp` is true, the workflow uploads a `cyclocomp-results` CSV artifact.
@@ -94,6 +103,7 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | :--- | :--- | :--- | :--- |
 | `enable_pkgdown` | `boolean` | `false` | Enable building and deploying `pkgdown` site on release branch pushes. |
 | `enable_cyclocomp` | `boolean` | `false` | Enable cyclomatic complexity analysis via cyclocomp. |
+| `enable_coverage_report` | `boolean` | `false` | Compute test coverage with covr and save an HTML report as the `coverage-report` artifact, without Codecov. |
 | `error_on` | `string` | `"warning"` | Error policy for `rcmdcheck` (`"never"`, `"note"`, `"warning"`, `"error"`). |
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
 | `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token (repository or organization global upload token). Uploads coverage to Codecov when set. |

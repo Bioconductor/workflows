@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: false
+      enable_coverage_report:
+        description: 'Compute test coverage with covr and save an HTML report as an artifact, without Codecov'
+        required: false
+        type: boolean
+        default: false
       error_on:
         description: 'Error policy for rcmdcheck (never, note, warning, error)'
         required: false
@@ -122,13 +127,18 @@ jobs:
       - name: Install Package Dependencies
         env:
           ENABLE_CYCLOCOMP: ${{ inputs.enable_cyclocomp }}
+          ENABLE_COVERAGE_REPORT: ${{ inputs.enable_coverage_report }}
         shell: Rscript {0}
         run: |
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest", BiocManager::repositories()))
           remotes::install_local(".", dependencies = TRUE, Ncpus = parallel::detectCores())
           # Only install the tools for features that are used in this run.
           pkgs <- c("rcmdcheck", "BiocCheck")
-          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) pkgs <- c(pkgs, "covr", "xml2")
+          upload_coverage <- nzchar(Sys.getenv("CODECOV_TOKEN"))
+          report_coverage <- Sys.getenv("ENABLE_COVERAGE_REPORT") == "true"
+          if (upload_coverage || report_coverage) pkgs <- c(pkgs, "covr")
+          if (upload_coverage) pkgs <- c(pkgs, "xml2")
+          if (report_coverage) pkgs <- c(pkgs, "DT", "htmltools")
           if (Sys.getenv("INSTALL_PKGDOWN") == "true") pkgs <- c(pkgs, "pkgdown")
           if (Sys.getenv("ENABLE_CYCLOCOMP") == "true") pkgs <- c(pkgs, "cyclocomp")
           BiocManager::install(pkgs, Ncpus = parallel::detectCores())
@@ -154,16 +164,57 @@ jobs:
             `quit-with-status` = TRUE, `no-check-bioc-help` = TRUE
           )
 
+      # Coverage is computed once and used by whichever of the Codecov upload
+      # (CODECOV_TOKEN set) and the HTML report (enable_coverage_report) is on.
       # Coverage problems never fail the check (ADR 0011).
       - name: Test Coverage
         id: coverage
-        if: success() && needs.setup.outputs.is_release_branch == 'false' && env.CODECOV_TOKEN != ''
+        if: >-
+          success()
+          && needs.setup.outputs.is_release_branch == 'false'
+          && (env.CODECOV_TOKEN != '' || inputs.enable_coverage_report == true)
         continue-on-error: true
+        env:
+          ENABLE_COVERAGE_REPORT: ${{ inputs.enable_coverage_report }}
         shell: Rscript {0}
         run: |
           cov <- covr::package_coverage()
           print(cov)
-          covr::to_cobertura(cov, filename = "coverage.xml")
+          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) {
+            covr::to_cobertura(cov, filename = "coverage.xml")
+          }
+          if (Sys.getenv("ENABLE_COVERAGE_REPORT") == "true") {
+            covr::report(cov, file = "coverage-report/index.html", browse = FALSE)
+            # Per-file percentages on the run's summary page.
+            per_line <- covr::tally_coverage(cov, by = "line")
+            files <- split(per_line$value > 0, per_line$filename)
+            # Lowest coverage first, so the files that need tests are at the top.
+            pct <- sort(vapply(files, function(x) 100 * mean(x), numeric(1)))
+            total <- covr::percent_coverage(cov)
+            if (length(pct) == 0L || is.nan(total)) {
+              summary_md <- "### Test coverage: no lines of R code were measured"
+            } else {
+              summary_md <- c(
+                sprintf("### Test coverage: %.1f%%", total),
+                "",
+                "| File | Coverage |",
+                "|---|---|",
+                sprintf("| `%s` | %.1f%% |", names(pct), pct),
+                "",
+                "The line-by-line report is in the `coverage-report` artifact."
+              )
+            }
+            cat(summary_md, file = Sys.getenv("GITHUB_STEP_SUMMARY"), sep = "\n", append = TRUE)
+          }
+
+      - name: Upload Coverage Report
+        if: steps.coverage.outcome == 'success' && inputs.enable_coverage_report == true
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage-report
+          if-no-files-found: warn
 
       # The Codecov action verifies its uploader with gpg, which the
       # Bioconductor container doesn't include.

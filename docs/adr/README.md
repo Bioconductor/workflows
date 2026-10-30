@@ -15,3 +15,4 @@ This directory contains Architecture Decision Records (ADRs) for the `bioconduct
 - [0009. Separation of Package Checking from Container Building](0009-separation-of-container-building-concerns.md)
 - [0010. Install Optional Tools Only When Used](0010-conditional-tool-installation.md)
 - [0011. Upload Coverage with the Codecov Action](0011-codecov-action-upload.md) (Proposed)
+- [0012. Opt-in Coverage Report Without Codecov](0012-opt-in-coverage-report.md) (Proposed)
