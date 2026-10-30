@@ -1,6 +1,6 @@
 # 0012. Opt-in Coverage Report Without Codecov
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-30
 - **Deciders:** Levi Waldron
 

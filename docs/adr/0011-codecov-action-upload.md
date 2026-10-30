@@ -1,6 +1,6 @@
 # 0011. Upload Coverage with the Codecov Action
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-30
 - **Deciders:** Levi Waldron
 
