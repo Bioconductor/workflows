@@ -19,7 +19,18 @@ R package dependencies are cached between runs, keyed on the package's dependenc
 
 To just run `R CMD check` and `BiocCheck` on commits and PRs, you can copy the [ci.yml](ci.yml) template into `.github/workflows/ci.yml` and no additional configuration is needed. 
 
-To add additional features like `COVR` and `pkgdown`, or change error sensitivity (`error/warning/note/never`), you can edit the above file, or use our interactive [Workflow Generator](https://bioconductor.github.io/workflows/).
+To add additional features like `COVR` and `pkgdown`, or change error sensitivity, you can edit the above file, or use our interactive [Workflow Generator](https://bioconductor.github.io/workflows/).
+
+### Failure Policies
+
+`R CMD check` and `BiocCheck` have separate failure policies, because they measure different things. `R CMD check` is about whether the package is correct and installable; `BiocCheck` is about whether it meets Bioconductor submission guidelines, which the Bioconductor build system does not itself enforce after acceptance.
+
+* `rcmdcheck_error_on` (default `warning`): fail the job when `R CMD check` reports this severity or worse. One of `never`, `note`, `warning`, `error`.
+* `bioccheck_error_on` (default `error`): `error` fails the job on any `BiocCheck` ERROR; `never` prints the `BiocCheck` report but does not fail the job. `BiocCheck` WARNINGs and NOTEs never fail the job under either setting.
+
+Set `bioccheck_error_on: 'never'` when a `BiocCheck` ERROR is known and unavoidable for now, so that `R CMD check` failures are still visible. The common case is a package under development that depends on a package not yet in Bioconductor or CRAN: `BiocCheck` raises an ERROR for any `Remotes:` or `Additional_repositories:` field in `DESCRIPTION`, and there is no way to silence that one check. Remove the override once the dependency is available from Bioconductor or CRAN.
+
+The `rcmdcheck_error_on` input was named `error_on` before 2026-11; callers must rename it.
 
 ### Repository Configuration for Optional Features
 
@@ -104,7 +115,8 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | `enable_pkgdown` | `boolean` | `false` | Enable building and deploying `pkgdown` site on release branch pushes. |
 | `enable_cyclocomp` | `boolean` | `false` | Enable cyclomatic complexity analysis via cyclocomp. |
 | `enable_coverage_report` | `boolean` | `false` | Compute test coverage with covr and save an HTML report as the `coverage-report` artifact, without Codecov. |
-| `error_on` | `string` | `"warning"` | Error policy for `rcmdcheck` (`"never"`, `"note"`, `"warning"`, `"error"`). |
+| `rcmdcheck_error_on` | `string` | `"warning"` | `R CMD check` failure policy (`"never"`, `"note"`, `"warning"`, `"error"`). |
+| `bioccheck_error_on` | `string` | `"error"` | `BiocCheck` failure policy (`"error"`, `"never"`). |
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
 | `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token (repository or organization global upload token). Uploads coverage to Codecov when set. |
 

@@ -18,11 +18,16 @@ on:
         required: false
         type: boolean
         default: false
-      error_on:
-        description: 'Error policy for rcmdcheck (never, note, warning, error)'
+      rcmdcheck_error_on:
+        description: 'R CMD check failure policy: fail the job on this severity or worse (never, note, warning, error)'
         required: false
         type: string
         default: 'warning'
+      bioccheck_error_on:
+        description: 'BiocCheck failure policy: error fails the job on any BiocCheck ERROR; never only reports'
+        required: false
+        type: string
+        default: 'error'
       bioc_version:
         description: 'Override Bioconductor version/container tag (e.g. devel, RELEASE_3_20). Auto-derived if empty.'
         required: false
@@ -145,23 +150,29 @@ jobs:
 
       - name: Run R CMD check
         env:
-          RCMDCHECK_ERROR_ON: ${{ inputs.error_on }}
+          RCMDCHECK_ERROR_ON: ${{ inputs.rcmdcheck_error_on }}
         shell: Rscript {0}
         run: |
           allowed <- c("never", "note", "warning", "error")
           error_on <- Sys.getenv("RCMDCHECK_ERROR_ON", unset = "warning")
-          if (!error_on %in% allowed) stop("Invalid error_on value: '", error_on, "'. Must be one of: ", paste(allowed, collapse = ", "))
+          if (!error_on %in% allowed) stop("Invalid rcmdcheck_error_on value: '", error_on, "'. Must be one of: ", paste(allowed, collapse = ", "))
           res <- rcmdcheck::rcmdcheck(".", args = "--no-manual", error_on = error_on, check_dir = "check")
           print(res)
 
       - name: Run BiocCheck
+        env:
+          BIOCCHECK_ERROR_ON: ${{ inputs.bioccheck_error_on }}
         shell: Rscript {0}
         run: |
+          allowed <- c("error", "never")
+          error_on <- Sys.getenv("BIOCCHECK_ERROR_ON", unset = "error")
+          if (!error_on %in% allowed) stop("Invalid bioccheck_error_on value: '", error_on, "'. Must be one of: ", paste(allowed, collapse = ", "))
           tarballs <- dir("check", pattern = "\\.tar\\.gz$", full.names = TRUE)
           if (length(tarballs) != 1) stop("Expected exactly one package tarball in check/, found ", length(tarballs))
+          # BiocCheck exits non-zero only on ERRORs; WARNINGs and NOTEs never fail the job.
           BiocCheck::BiocCheck(
             tarballs,
-            `quit-with-status` = TRUE, `no-check-bioc-help` = TRUE
+            `quit-with-status` = identical(error_on, "error"), `no-check-bioc-help` = TRUE
           )
 
       # Coverage is computed once and used by whichever of the Codecov upload

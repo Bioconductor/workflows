@@ -331,15 +331,28 @@
 
             <div class="form-group" style="margin-top: 32px;">
                 <div class="label-text-wrapper" style="margin-bottom: 8px;">
-                    <span style="font-weight: 500;">Error Policy (R CMD check)</span>
+                    <span style="font-weight: 500;">Failure Policy (R CMD check)</span>
                     <span class="help-text">Determines which R CMD check results will cause the workflow to fail.</span>
                 </div>
                 <div class="select-wrapper">
-                    <select id="opt-error-on">
+                    <select id="opt-rcmdcheck-error-on">
                         <option value="warning" selected>warning (Fail on warnings and errors)</option>
                         <option value="error">error (Fail only on errors)</option>
                         <option value="note">note (Fail on notes, warnings, and errors)</option>
                         <option value="never">never (Never fail based on R CMD check output)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 24px;">
+                <div class="label-text-wrapper" style="margin-bottom: 8px;">
+                    <span style="font-weight: 500;">Failure Policy (BiocCheck)</span>
+                    <span class="help-text">BiocCheck warnings and notes never fail the workflow. Use "never" when a BiocCheck error is known and unavoidable for now, such as a Remotes: dependency not yet in Bioconductor. See <a href="https://github.com/bioconductor/workflows/blob/main/bioccheck_usage.md#failure-policies" target="_blank" rel="noopener noreferrer" style="color: var(--accent-primary); text-decoration: none;">usage guide</a>.</span>
+                </div>
+                <div class="select-wrapper">
+                    <select id="opt-bioccheck-error-on">
+                        <option value="error" selected>error (Fail on BiocCheck errors)</option>
+                        <option value="never">never (Report only, never fail)</option>
                     </select>
                 </div>
             </div>
@@ -367,12 +380,13 @@
             const elCodecov = document.getElementById('opt-codecov');
             const elCyclocomp = document.getElementById('opt-cyclocomp');
             const elCoverageReport = document.getElementById('opt-coverage-report');
-            const elErrorOn = document.getElementById('opt-error-on');
+            const elRcmdcheckErrorOn = document.getElementById('opt-rcmdcheck-error-on');
+            const elBiocCheckErrorOn = document.getElementById('opt-bioccheck-error-on');
             const elOutput = document.getElementById('yaml-output');
             const btnCopy = document.getElementById('copy-btn');
 
             // Listeners
-            [elPkgdown, elCodecov, elCyclocomp, elCoverageReport, elErrorOn].forEach(el => {
+            [elPkgdown, elCodecov, elCyclocomp, elCoverageReport, elRcmdcheckErrorOn, elBiocCheckErrorOn].forEach(el => {
                 el.addEventListener('change', generateYaml);
             });
 
@@ -381,7 +395,8 @@
                 const hasCodecov = elCodecov.checked;
                 const hasCyclocomp = elCyclocomp.checked;
                 const hasCoverageReport = elCoverageReport.checked;
-                const errorOn = elErrorOn.value;
+                const rcmdcheckErrorOn = elRcmdcheckErrorOn.value;
+                const bioccheckErrorOn = elBiocCheckErrorOn.value;
 
                 // Build the JavaScript Object Model
                 const workflowObj = {
@@ -407,8 +422,9 @@
                     workflowObj.jobs.bioccheck.with.enable_pkgdown = true;
                 }
 
-                // Add error_on parameter
-                workflowObj.jobs.bioccheck.with.error_on = errorOn;
+                // Add failure policy parameters
+                workflowObj.jobs.bioccheck.with.rcmdcheck_error_on = rcmdcheckErrorOn;
+                workflowObj.jobs.bioccheck.with.bioccheck_error_on = bioccheckErrorOn;
 
                 // Add cyclocomp parameter if enabled
                 if (hasCyclocomp) {
