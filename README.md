@@ -18,7 +18,7 @@ To show the check status at the top of your package's `README.md`, add this badg
 [![R CMD check](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<PKGNAME>/actions/workflows/ci.yml)
 ```
 
-To customize options (add Codecov, pkgdown, cyclocomp, or change check sensitivity from the default "warning") use the [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/) and [add more status badges](bioccheck_usage.md#adding-status-badges-to-readmemd).
+To customize options (add Codecov, pkgdown, cyclocomp, or change the failure policies from their defaults of "warning" for R CMD check and "error" for BiocCheck) use the [Bioconductor GitHub Actions Workflow Generator](https://bioconductor.github.io/workflows/) and [add more status badges](bioccheck_usage.md#adding-status-badges-to-readmemd).
 
 
 ## Multi-platform Testing using `r-universe-org/workflows`
