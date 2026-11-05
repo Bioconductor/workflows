@@ -174,6 +174,7 @@ jobs:
           EOF
 
       - name: Run R CMD check
+        id: rcmdcheck
         env:
           RCMDCHECK_ERROR_ON: ${{ inputs.rcmdcheck_error_on }}
         shell: Rscript {0}
@@ -181,7 +182,12 @@ jobs:
           # Read by the startup hook above. Set here, not from the github.workspace context,
           # which is the host path in container jobs; absolute because tests run in
           # check/<pkg>.Rcheck/tests.
-          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) Sys.setenv(TESTTHAT_JUNIT_FILE = file.path(getwd(), "junit.xml"))
+          # Removing any junit.xml from the checkout means only this run's results are uploaded.
+          if (nzchar(Sys.getenv("CODECOV_TOKEN"))) {
+            junit_file <- file.path(getwd(), "junit.xml")
+            unlink(junit_file)
+            Sys.setenv(TESTTHAT_JUNIT_FILE = junit_file)
+          }
           allowed <- c("never", "note", "warning", "error")
           error_on <- Sys.getenv("RCMDCHECK_ERROR_ON", unset = "warning")
           if (!error_on %in% allowed) stop("Invalid rcmdcheck_error_on value: '", error_on, "'. Must be one of: ", paste(allowed, collapse = ", "))
@@ -263,7 +269,10 @@ jobs:
         if: >-
           !cancelled()
           && env.CODECOV_TOKEN != ''
-          && (steps.coverage.outcome == 'success' || hashFiles('junit.xml') != '')
+          && (
+            steps.coverage.outcome == 'success'
+            || (steps.rcmdcheck.outcome != 'skipped' && hashFiles('junit.xml') != '')
+          )
         continue-on-error: true
         shell: bash
         env:
@@ -293,6 +302,7 @@ jobs:
           !cancelled()
           && env.CODECOV_TOKEN != ''
           && steps.gpg.outcome == 'success'
+          && steps.rcmdcheck.outcome != 'skipped'
           && hashFiles('junit.xml') != ''
         continue-on-error: true
         uses: codecov/codecov-action@v7
