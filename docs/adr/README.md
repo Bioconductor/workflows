@@ -17,3 +17,4 @@ This directory contains Architecture Decision Records (ADRs) for the `bioconduct
 - [0011. Upload Coverage with the Codecov Action](0011-codecov-action-upload.md)
 - [0012. Opt-in Coverage Report Without Codecov](0012-opt-in-coverage-report.md)
 - [0013. Separate Failure Policies for `R CMD check` and `BiocCheck`](0013-separate-bioccheck-failure-policy.md)
+- [0014. Codecov Test Analytics from the `R CMD check` Run](0014-codecov-test-analytics.md)

@@ -36,7 +36,7 @@ The `rcmdcheck_error_on` input was named `error_on` before 2026-11; callers must
 
 Even if you use the Workflow Generator, you must perform these one-time repository settings to use optional features:
 
-**For Codecov** (coverage is uploaded on pushes and PRs to non-release branches only):
+**For Codecov** (coverage is uploaded on pushes and PRs to non-release branches only; test results on all branches):
 1. **Obtain Codecov Token**: Log in to [Codecov](https://about.codecov.io/), link your repository, and copy the repository upload token. Alternatively, an organization admin can copy the organization's global upload token (organization settings in Codecov), which works for every repository in the organization; store it once as a GitHub organization secret named `CODECOV_TOKEN`. Paste only the token itself, not `CODECOV_TOKEN=...`.
 2. **Set Repository Secret**: In your GitHub repository, navigate to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**. Create a secret named `CODECOV_TOKEN` containing your token.
 
@@ -52,6 +52,12 @@ Two independent options, which can be used together. Both skip release branches,
 - **Coverage report without Codecov**: set `enable_coverage_report: true`. No account or token is needed, and it works on pull requests from forks. The run's summary page shows the total and per-file coverage, and the line-by-line HTML report is saved as the `coverage-report` artifact: download it from the **Artifacts** section at the bottom of the run page and open `index.html`.
 
 Coverage runs the test suite a second time with instrumentation, so either option adds roughly the time of one more test run.
+
+### Codecov Test Analytics
+
+When `CODECOV_TOKEN` is set, packages tested with `testthat` also upload their test results to [Codecov Test Analytics](https://docs.codecov.com/docs/test-analytics), which lists failing, slow and flaky tests. The results come from the `R CMD check` run itself, so the tests are not run again, and they are uploaded on every branch, including release branches, and also when `R CMD check` fails. Packages that use `RUnit` or plain `tests/*.R` scripts upload no test results. An upload problem never fails the check.
+
+This only works when `tests/testthat.R` calls `test_check()` without its own `reporter` argument, as the file written by `usethis::use_testthat()` does.
 
 ### Using the Cyclocomp Artifact
 
@@ -118,7 +124,7 @@ Here's a full set of badges for the top of your package's `README.md`. Replace `
 | `rcmdcheck_error_on` | `string` | `"warning"` | `R CMD check` failure policy (`"never"`, `"note"`, `"warning"`, `"error"`). |
 | `bioccheck_error_on` | `string` | `"error"` | `BiocCheck` failure policy (`"error"`, `"never"`). |
 | `bioc_version` | `string` | `""` | Optional override for container tag (e.g. `devel`, `RELEASE_3_20`). |
-| `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token (repository or organization global upload token). Uploads coverage to Codecov when set. |
+| `secrets.CODECOV_TOKEN` | secret | `""` | Optional Codecov token (repository or organization global upload token). Uploads coverage, and `testthat` test results for [Test Analytics](#codecov-test-analytics), to Codecov when set. |
 
 ## Which Version to Use
 
