@@ -162,13 +162,19 @@ jobs:
           startup="$(Rscript -e 'cat(R.home("share"))')/R/tests-startup.R"
           cat >> "$startup" <<'EOF'
 
-          # JunitReporter errors without xml2, which would fail the tests.
-          if (nzchar(Sys.getenv("TESTTHAT_JUNIT_FILE")) && nzchar(system.file(package = "xml2"))) {
+          if (nzchar(Sys.getenv("TESTTHAT_JUNIT_FILE"))) {
             setHook(packageEvent("testthat", "onLoad"), function(...) {
-              options(testthat.default_check_reporter = testthat::MultiReporter$new(list(
-                testthat::CheckReporter$new(),
-                testthat::JunitReporter$new(file = Sys.getenv("TESTTHAT_JUNIT_FILE"))
-              )))
+              # JunitReporter needs xml2. With _R_CHECK_SUGGESTS_ONLY_=true, as in the
+              # Bioconductor container, the tests see only the package's declared
+              # dependencies, so load xml2 from the library it was installed in without
+              # adding that library to .libPaths(). Without xml2, keep the default reporter.
+              xml2_lib <- c(.libPaths(), Sys.getenv("TESTTHAT_JUNIT_XML2_LIB"))
+              if (!inherits(try(loadNamespace("xml2", lib.loc = xml2_lib), silent = TRUE), "try-error")) {
+                options(testthat.default_check_reporter = testthat::MultiReporter$new(list(
+                  testthat::CheckReporter$new(),
+                  testthat::JunitReporter$new(file = Sys.getenv("TESTTHAT_JUNIT_FILE"))
+                )))
+              }
             })
           }
           EOF
@@ -186,7 +192,10 @@ jobs:
           if (nzchar(Sys.getenv("CODECOV_TOKEN"))) {
             junit_file <- file.path(getwd(), "junit.xml")
             unlink(junit_file)
-            Sys.setenv(TESTTHAT_JUNIT_FILE = junit_file)
+            Sys.setenv(
+              TESTTHAT_JUNIT_FILE = junit_file,
+              TESTTHAT_JUNIT_XML2_LIB = dirname(system.file(package = "xml2"))
+            )
           }
           allowed <- c("never", "note", "warning", "error")
           error_on <- Sys.getenv("RCMDCHECK_ERROR_ON", unset = "warning")
