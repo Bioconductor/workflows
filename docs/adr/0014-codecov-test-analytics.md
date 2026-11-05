@@ -1,6 +1,6 @@
 # 0014. Codecov Test Analytics from the `R CMD check` Run
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-11-05
 - **Deciders:** Levi Waldron
 
